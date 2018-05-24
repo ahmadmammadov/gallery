@@ -79,13 +79,13 @@ class PhotosController extends Controller
     public function actionCreate()
     {
         $model = new Photos();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
             $imageName = $this->randomString(10);
             FileHelper::createDirectory('assets/uploads');
             $model->file = UploadedFile::getInstance($model, 'file');
             $model->file->saveAs('assets/uploads/'.$imageName.'.'.$model->file->extension);
             
-            $model->name ='uploads/'.$imageName.'.'.$model->file->extension;
+            $model->name =Yii::$app->getUrlManager()->getBaseUrl().'/assets/uploads/'.$imageName.'.'.$model->file->extension;
             $model->save();
             return $this->redirect(['view', 'id' => $model->photo_id]);
         }
@@ -126,6 +126,7 @@ class PhotosController extends Controller
             'dataProvider' => $dataProvider,
             'id' => $id,
             'data' => $data,
+            'models' => $models,
         ]);
     }
 
@@ -173,8 +174,7 @@ class PhotosController extends Controller
         $data = array();
         $models = $this->findAll($id);
         foreach($models as $model) {
-                $data[] = array('content' => Html::img(Yii::$app->getUrlManager()->getBaseUrl().'/assets/'.$model->imageContent),
-                'caption' => $model->caption,'imageOptions' => 'width => 200');
+                $data[] = array('content' => Html::img(Yii::$app->getUrlManager()->getBaseUrl().'/assets/'.$model->name));
     
         }
         return $data;

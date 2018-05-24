@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'gallery_id')->textInput(['readOnly' => true]) ?>
 
-    <?= $form->field($model, 'file', ['inputOptions' => ['id' => 'fileInput']])->fileInput()?>
+    <?= $form->field($model, 'file')->fileInput()?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
