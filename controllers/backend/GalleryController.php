@@ -4,6 +4,7 @@ namespace kouosl\gallery\controllers\backend;
 
 use Yii;
 use kouosl\gallery\models\Gallery;
+use kouosl\gallery\models\Photos;
 use kouosl\gallery\models\GallerySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -108,6 +109,7 @@ class GalleryController extends Controller
      */
     public function actionDelete($id)
     {
+        Photos::deleteAll(['gallery_id' => $id]);
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
