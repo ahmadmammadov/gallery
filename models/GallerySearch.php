@@ -5,9 +5,10 @@ namespace kouosl\gallery\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use kouosl\gallery\models\Gallery;
 
 /**
- * GallerySearch represents the model behind the search form about `app\modules\gallery\models\Gallery`.
+ * GallerySearch represents the model behind the search form of `kouosl\gallery\models\Gallery`.
  */
 class GallerySearch extends Gallery
 {
@@ -17,8 +18,8 @@ class GallerySearch extends Gallery
     public function rules()
     {
         return [
-            [['id'], 'integer'],
-            [['title', 'description'], 'safe'],
+            [['gallery_id'], 'integer'],
+            [['name', 'description', 'updated_at', 'created_at'], 'safe'],
         ];
     }
 
@@ -40,7 +41,9 @@ class GallerySearch extends Gallery
      */
     public function search($params)
     {
-        $query = gallery::find();
+        $query = Gallery::find();
+
+        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -54,11 +57,14 @@ class GallerySearch extends Gallery
             return $dataProvider;
         }
 
+        // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'gallery_id' => $this->gallery_id,
+            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at,
         ]);
 
-        $query->andFilterWhere(['like', 'title', $this->title])
+        $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;

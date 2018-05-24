@@ -7,10 +7,13 @@ use Yii;
 /**
  * This is the model class for table "gallery".
  *
- * @property int $id
- * @property string $title
+ * @property int $gallery_id
+ * @property string $name
  * @property string $description
- * @property string $date
+ * @property string $updated_at
+ * @property string $created_at
+ *
+ * @property Photos[] $photos
  */
 class Gallery extends \yii\db\ActiveRecord
 {
@@ -28,11 +31,10 @@ class Gallery extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'title', 'description', 'date'], 'required'],
-            [['id'], 'integer'],
-            [['title', 'description'], 'string'],
-            [['date'], 'safe'],
-            [['id'], 'unique'],
+            [['name'], 'required'],
+            [['description'], 'string'],
+            [['updated_at', 'created_at'], 'safe'],
+            [['name'], 'string', 'max' => 50],
         ];
     }
 
@@ -42,10 +44,19 @@ class Gallery extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'title' => 'Title',
+            'gallery_id' => 'Gallery ID',
+            'name' => 'Name',
             'description' => 'Description',
-            'date' => 'Date',
+            'updated_at' => 'Updated At',
+            'created_at' => 'Created At',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPhotos()
+    {
+        return $this->hasMany(Photos::className(), ['gallery_id' => 'gallery_id']);
     }
 }

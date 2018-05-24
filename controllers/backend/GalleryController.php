@@ -2,96 +2,63 @@
 
 namespace kouosl\gallery\controllers\backend;
 
-use kouosl\gallery\models\GalleryData;
-use kouosl\gallery\models\UploadImage;
 use Yii;
 use kouosl\gallery\models\Gallery;
 use kouosl\gallery\models\GallerySearch;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\UnauthorizedHttpException;
-use yii\web\Session;
-use yii\web\UploadedFile;
-use yii\filters\AccessControl;
-use yii\data\ActiveDataProvider;
+
 /**
  * GalleryController implements the CRUD actions for Gallery model.
  */
-class GalleryController extends DefaultController
+class GalleryController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['index', 'view','create','delete','update'],
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'actions' => ['index', 'view','create','delete','update'],
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    //'delete' => ['post'],
+                    'delete' => ['POST'],
                 ],
             ],
         ];
-      
-    }
-    public function init(){
-    	parent::init();
-    }
-
-    public function actionGallery(){
-        $provider = new ActiveDataProvider([
-            'query' => Gallery::find(),
-            'pagination' => [
-                'pagesize' => 2,
-            ],
-        ]);
-        return $this->render('_gallery', [
-            'dataProvider' => $provider,
-        ]);
-    }
-    public function actionIndex()
-    {
-        return $this->actionManage();
     }
 
     /**
      * Lists all Gallery models.
      * @return mixed
      */
-    public function actionManage()
+    public function actionIndex()
     {
-    	
-
-    	
         $searchModel = new GallerySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('_manage', [
+        return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
+    
     /**
      * Displays a single Gallery model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-
-    	
-        return $this->render('_view', [
-            'model' => $this->findModel($id),
-        ]);
+        if (!Yii::$app->session->getIsActive()) {
+            Yii::$app->session->open();
+        }
+        Yii::$app->session['viewPhotosId'] = $id;
+        Yii::$app->session->close();
+        $this->redirect(array('/gallery/photos'));
     }
 
     /**
@@ -101,34 +68,15 @@ class GalleryController extends DefaultController
      */
     public function actionCreate()
     {
-
-    	
         $model = new Gallery();
 
-        $uploadImage = new UploadImage();
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-
-            $uploadImage->imageFile =  UploadedFile::getInstance($uploadImage, 'imageFile');
-
-            $model->picture = $uploadImage->upload();
-
-            if(!$model->save()){
-
-                yii::$app->session->setFlash('flashMessage', ['type' => 'error', 'message' => Module::t('gallery', 'Gallery Not Saved' )]);
-
-                return $this->render('_create', ['model' => $model]); // error
-            }
-
-            return $this->redirect(['view', 'id' => $model->id]);
-
-        } else {
-
-            return $this->render('_create', [
-                'model' => $model,
-                'uploadImage' => $uploadImage
-            ]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->gallery_id]);
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -136,40 +84,19 @@ class GalleryController extends DefaultController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
     {
-    	
-
-    	
         $model = $this->findModel($id);
 
-
-        $uploadImage = new UploadImage();
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-
-            $uploadImage->imageFile =  UploadedFile::getInstance($uploadImage, 'imageFile');
-
-            if($imageName = $uploadImage->upload())
-                $model->picture = $imageName;
-
-            if(!$model->save()){
-
-                yii::$app->session->setFlash('flashMessage', ['type' => 'error', 'message' => Module::t('gallery', 'Gallery Not Saved' )]);
-
-                return $this->render('_update', ['model' => $model]); // error
-            }
-
-            return $this->redirect(['view', 'id' => $model->id]);
-
-        } else {
-
-            return $this->render('_update', [
-                'model' => $model,
-                'uploadImage' => $uploadImage
-            ]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->gallery_id]);
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -177,22 +104,13 @@ class GalleryController extends DefaultController
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
+        $this->findModel($id)->delete();
 
-        GalleryData::deleteAll(['gallery_id' => $id]);
-
-        $model = $this->findModel($id);
-
-        unlink($model->imagePath);
-
-        $model->delete();
-
-        yii::$app->session->setFlash('flashMessage', ['type' => 'success', 'message' => 'Attemp Başarılı Bir Şekilde Silindi!']);
-
-        return $this->redirect(['manage']);
-
+        return $this->redirect(['index']);
     }
 
     /**
@@ -205,13 +123,9 @@ class GalleryController extends DefaultController
     protected function findModel($id)
     {
         if (($model = Gallery::findOne($id)) !== null) {
-
             return $model;
-
-        } else {
-
-            throw new NotFoundHttpException('The requested page does not exist.');
-
         }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
