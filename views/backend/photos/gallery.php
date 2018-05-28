@@ -34,9 +34,9 @@ div.desc {
 </style>
 </div>
 <div class="gallery-index">
-        <?php foreach ($models as $model) { 
+        <?php foreach ($data as $model) { 
             echo '<div class="gallery">
-            <img src="'.$model['name'].'" width="300" height="200"/>
+            <img src="'.$model.'" width="300" height="200"/>
             </div>';
             }  
         ?>

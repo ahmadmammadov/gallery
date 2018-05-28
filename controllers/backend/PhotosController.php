@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
+use yii\helpers\Url;
 
 /**
  * PhotosController implements the CRUD actions for Photos model.
@@ -81,11 +82,11 @@ class PhotosController extends Controller
         $model = new Photos();
         if ($model->load(Yii::$app->request->post())) {
             $imageName = $this->randomString(10);
-            FileHelper::createDirectory('assets/uploads');
+            FileHelper::createDirectory('../../data/images');
             $model->file = UploadedFile::getInstance($model, 'file');
-            $model->file->saveAs('assets/uploads/'.$imageName.'.'.$model->file->extension);
+            $model->file->saveAs('../../data/images/'.$imageName.'.'.$model->file->extension);
             
-            $model->name =Yii::$app->getUrlManager()->getBaseUrl().'/assets/uploads/'.$imageName.'.'.$model->file->extension;
+            $model->name ='images/'.$imageName.'.'.$model->file->extension;
             $model->save();
             return $this->redirect(['view', 'id' => $model->photo_id]);
         }
@@ -121,7 +122,7 @@ class PhotosController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->andFilterWhere(['gallery_id'=>$id]);
         $models = $this->findAll($id);
-        $data = $this->getSliderContentData($id);
+        $data = $this->getGalleryContentData($id);
         return $this->render('gallery', [
             'dataProvider' => $dataProvider,
             'id' => $id,
@@ -169,12 +170,12 @@ class PhotosController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    protected function getSliderContentData($id) {
+    protected function getGalleryContentData($id) {
         
         $data = array();
         $models = $this->findAll($id);
         foreach($models as $model) {
-                $data[] = array('content' => Html::img(Yii::$app->getUrlManager()->getBaseUrl().'/assets/'.$model->name));
+            $data[] = Url::to('/data/', true).$model->name;
     
         }
         return $data;
