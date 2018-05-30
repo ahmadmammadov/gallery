@@ -20,4 +20,4 @@ komutu ile veri tabanını oluşturmanız lazım.
 
 > 'modules' => [ 'gallery' => [ 'class' => 'kouosl\gallery\Module', ],
 ##  Gallery Oluşturma
-Modulün **index** sayfasından **Create Gallery** butonuna tıklayarak açılan sayfadan yeni bir slider oluşturulabilir. Daha sonra **view** kısmından sliderın içerik sayfasına gidilip oradan yeni resimler eklenebilir. Bu kısımda **update** ve **delete** işlemi de yapabilirsiniz.
+Modulün **index** sayfasından **Create Gallery** butonuna tıklayarak açılan sayfadan yeni bir gallery oluşturulabilir. Daha sonra **view** kısmından gallerinin içerik sayfasına gidilip oradan yeni resimler eklenebilir. Bu kısımda **update** ve **delete** işlemi de yapabilirsiniz.
