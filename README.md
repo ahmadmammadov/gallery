@@ -1,5 +1,5 @@
 ## Gallery Modulü
- yii 2 framework te yazılmıştır.Gallery modulünü ekleyip kullana bilirsiniz.
+ yii 2 framework te yazılmıştır.Gallery modulünü ekleyip kullana bilirsiniz.Bunun için aşağıda gösterilenleri yapmalısınız.
 ## Kurulum Aşaması
 Projenizin ana klasörünün altında bulunan `composer.json` adlı dosyayı açın. `repositories` kısmına
 > {
@@ -20,4 +20,4 @@ komutu ile veri tabanını oluşturmanız lazım.
 
 > 'modules' => [ 'gallery' => [ 'class' => 'kouosl\gallery\Module', ],
 ##  Gallery Oluşturma
-Modulün **index** sayfasından **Create Gallery** butonuna tıklayarak açılan sayfadan yeni bir gallery oluşturulabilir. Daha sonra **view** kısmından gallerinin içerik sayfasına gidilip oradan yeni resimler eklenebilir. Bu kısımda **update** ve **delete** işlemi de yapabilirsiniz.
+Modulün **index** sayfasından **Create Gallery** butonuna tıklayarak yeni bir gallery oluştura bilirsiniz. Sonra **Create Photos** kısmında yeni resimler ekleyebilirsiniz. Bu kısımda **update** ve **delete** işlemi de yapabilirsiniz.
