@@ -19,6 +19,6 @@ komutu ile veri tabanını oluşturmanız lazım.
 **Portal/Backend/config**  ve  **Portal/Frontend/config**  dizinleri altındaki  `main.php`  içine
 
 > 'modules' => [ 'gallery' => [ 'class' => 'kouosl\gallery\Module', ],
-eklemelerini yapın.
+> eklemelerini yapın.
 ##  Gallery Oluşturma
 Modulün **index** sayfasından **Create Gallery** butonuna tıklayarak yeni bir gallery oluştura bilirsiniz. Sonra **Create Photos** kısmında yeni resimler ekleyebilirsiniz. Bu kısımda **update** ve **delete** işlemi de yapabilirsiniz.
